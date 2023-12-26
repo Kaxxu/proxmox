@@ -1,0 +1,71 @@
+---
+- name: Clone LXC container
+  community.general.proxmox:
+    api_user: "{{ api_user }}"
+    api_token_id: "{{ api_token_id }}"
+    api_token_secret: "{{ api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ proxmox_node }}"
+    clone: "{{ item.clone_from }}"
+    storage: "{{ storage }}"
+    clone_type: full
+    vmid: "{{ item.vmid }}"
+    hostname: "{{ item.hostname }}"
+    tags: "{{ item.tags }}"
+    onboot: "{{ item.onboot }}"
+    state: "{{ 'stopped' if item.state == 'absent' else item.state }}"
+  with_items:
+    - "{{ services }}"
+
+- name: Set LXC network configuration
+  community.general.proxmox:
+    api_user: "{{ api_user }}"
+    api_token_id: "{{ api_token_id }}"
+    api_token_secret: "{{ api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ proxmox_node }}"
+    vmid: "{{ item.vmid }}"
+    hostname: "{{ item.hostname }}"
+    netif: '{"net0":"name=eth0,gw={{ network }}.{{ gateway }},ip={{ network }}.{{ item.ip_addr }}/24,bridge=vmbr0"}'
+    update: true
+  with_items:
+    - "{{ services }}"
+
+- name: Start LXC container
+  community.general.proxmox:
+    api_user: "{{ api_user }}"
+    api_token_id: "{{ api_token_id }}"
+    api_token_secret: "{{ api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ proxmox_node }}"
+    vmid: "{{ item.vmid }}"
+    state: started
+  when: item.state == "present"
+  with_items:
+    - "{{ services }}"
+
+- name: Stop LXC container
+  community.general.proxmox:
+    api_user: "{{ api_user }}"
+    api_token_id: "{{ api_token_id }}"
+    api_token_secret: "{{ api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ proxmox_node }}"
+    vmid: "{{ item.vmid }}"
+    state: stopped
+  when: item.state == "stopped"
+  with_items:
+    - "{{ services }}"
+
+- name: Remove LXC container
+  community.general.proxmox:
+    api_user: "{{ api_user }}"
+    api_token_id: "{{ api_token_id }}"
+    api_token_secret: "{{ api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ proxmox_node }}"
+    vmid: "{{ item.vmid }}"
+    state: absent
+  when: item.state == "absent"
+  with_items:
+    - "{{ services }}"

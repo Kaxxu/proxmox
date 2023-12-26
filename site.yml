@@ -1,0 +1,11 @@
+---
+- hosts: proxmox
+  vars_files:
+    - vars.yml
+  vars:
+    api_user: "{{ lookup('aws_ssm', '/proxmox/api_user', region='eu-central-1' ) }}"
+    api_token_id: "{{ lookup('aws_ssm', '/proxmox/api_token_id', region='eu-central-1' ) }}"
+    api_token_secret: "{{ lookup('aws_ssm', '/proxmox/api_token_secret', region='eu-central-1' ) }}"
+  roles:
+    - lxc-clone
+#    - testing
