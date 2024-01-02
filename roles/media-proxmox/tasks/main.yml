@@ -1,0 +1,11 @@
+---
+- name: Set access to host storage
+  ansible.builtin.shell: pct set 203 -mp0 /adatasx/torrents,mp=/opt/torrents
+
+- name: test
+  ansible.builtin.file:
+    path: /adatasx/torrents
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0777'

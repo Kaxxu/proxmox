@@ -1,6 +1,8 @@
 ---
-- hosts: proxmox
+- name: LXC
+  hosts: proxmox
   vars_files:
+    - vars-lxc.yml
     - vars.yml
   vars:
     api_user: "{{ lookup('aws_ssm', '/proxmox/api_user', region='eu-central-1' ) }}"
@@ -8,4 +10,19 @@
     api_token_secret: "{{ lookup('aws_ssm', '/proxmox/api_token_secret', region='eu-central-1' ) }}"
   roles:
     - lxc-clone
-#    - testing
+
+- name: Pre-config tasks
+  hosts: lxc
+  roles:
+    - preconf
+
+- name: Media
+  hosts: Media
+  become: yes
+  roles:
+    - media
+
+- name: Set Media Space
+  hosts: proxmox
+  roles:
+    - media-proxmox

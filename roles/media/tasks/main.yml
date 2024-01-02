@@ -1,0 +1,49 @@
+---
+- name: Install client
+  ansible.builtin.dnf:
+    name: "qbittorrent-nox"
+    state: latest
+
+- name: Add user
+  ansible.builtin.user:
+    name: qbtuser
+    shell: /usr/sbin/nologin
+
+- name: Download systemd config
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/qbittorrent/qBittorrent/master/dist/unix/systemd/qbittorrent-nox%40.service.in
+    dest: /etc/systemd/system/qbittorrent.service
+    mode: '0755'
+
+- name: Systemd start Qbittorrent
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    enabled: true
+    name: qbittorrent-nox@qbtuser
+
+- name: Install rpmfusion
+  ansible.builtin.dnf:
+    name:
+      - rpmfusion-free-release
+    state: latest
+
+- name: Install the latest version of jellyfin
+  ansible.builtin.dnf:
+    name:
+      - jellyfin
+    state: latest
+
+- name: Systemd start jellyfin
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    enabled: true
+    name: jellyfin
+
+- name: Recursively change ownership of a directory
+  ansible.builtin.file:
+    path: /opt/torrents
+    state: directory
+    recurse: yes
+    owner: qbtuser

@@ -2,38 +2,4 @@
 proxmox_api_host: reed
 proxmox_node: reed
 storage: local-lvm
-network: 192.168.1
-gateway: 1
-
-services:
-  - hostname: DNS
-    vmid: 201
-    ip_addr: 151
-    clone_from: 200
-    onboot: true
-    tags: service
-    state: present
-
-  - hostname: VPC
-    vmid: 202
-    ip_addr: 152
-    clone_from: 200
-    onboot: true
-    tags: service
-    state: present
-
-  - hostname: Qbittorrent
-    vmid: 203
-    ip_addr: 153
-    clone_from: 200
-    onboot: true
-    tags: service
-    state: present
-
-  - hostname: Media
-    vmid: 204
-    ip_addr: 154
-    clone_from: 200
-    onboot: true
-    tags: service
-    state: present
+gateway: 192.168.1.1

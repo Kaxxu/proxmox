@@ -15,7 +15,7 @@
     onboot: "{{ item.onboot }}"
     state: "{{ 'stopped' if item.state == 'absent' else item.state }}"
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
 
 - name: Set LXC network configuration
   community.general.proxmox:
@@ -26,10 +26,10 @@
     node: "{{ proxmox_node }}"
     vmid: "{{ item.vmid }}"
     hostname: "{{ item.hostname }}"
-    netif: '{"net0":"name=eth0,gw={{ network }}.{{ gateway }},ip={{ network }}.{{ item.ip_addr }}/24,bridge=vmbr0"}'
+    netif: '{"net0":"name=eth0,gw={{ gateway }},ip={{ item.ip_addr }}/24,bridge=vmbr0"}'
     update: true
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
 
 - name: Start LXC container
   community.general.proxmox:
@@ -42,7 +42,7 @@
     state: started
   when: item.state == "present"
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
 
 - name: Stop LXC container
   community.general.proxmox:
@@ -55,7 +55,7 @@
     state: stopped
   when: item.state == "stopped"
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
 
 - name: Remove LXC container
   community.general.proxmox:
@@ -68,4 +68,8 @@
     state: absent
   when: item.state == "absent"
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
+
+- name: Pause for 30 sec
+  ansible.builtin.pause:
+    seconds: 30

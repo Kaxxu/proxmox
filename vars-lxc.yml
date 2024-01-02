@@ -1,0 +1,29 @@
+---
+lxc:
+  - hostname: DNS
+    vmid: 201
+    ip_addr: "{{ hostvars['DNS'].ansible_host }}"
+    clone_from: 200
+    onboot: true
+    tags: service
+    state: present
+    mounts:
+    features:
+
+  - hostname: VPN
+    vmid: 202
+    ip_addr: "{{ hostvars['VPN'].ansible_host }}"
+    clone_from: 200
+    onboot: true
+    tags: service
+    state: present
+    mounts:
+    features:
+
+  - hostname: Media
+    vmid: 203
+    ip_addr: "{{ hostvars['Media'].ansible_host }}"
+    clone_from: 200
+    onboot: true
+    tags: service
+    state: present

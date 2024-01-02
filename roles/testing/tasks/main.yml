@@ -13,4 +13,13 @@
   debug: msg="{{ item.state }}"
   when: item.state == "present"
   with_items:
-    - "{{ services }}"
+    - "{{ lxc }}"
+
+- name: hostvars
+  debug: msg="{{ hostvars['qbittorrent'].ansible_host }}"
+
+#- name: echo
+##  debug: msg="{{ lxc[lookup('Media')]['vmid'] }}"
+#  debug: msg="{{ lxc[hostname] }}"
+#  ansible.builtin.shell: echo "{{ lxc.vmid['Media'] }}"
+
